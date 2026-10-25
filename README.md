@@ -14,7 +14,7 @@ A parametric hollow cylinder with longitudinal flutes that twist along its axis.
 | File | Purpose |
 |---|---|
 | `index.html` | Browser preview studio (Three.js loaded from a CDN, no build step) |
-| `Helical_Fluted_Cylinder.py` | Fusion 360 script with a native parameter dialog |
+| `Helical Fluted Cylinder.py` | Fusion 360 script with a native parameter dialog |
 
 ---
 
