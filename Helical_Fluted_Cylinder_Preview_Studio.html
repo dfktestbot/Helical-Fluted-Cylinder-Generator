@@ -1,0 +1,383 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Helical Fluted Cylinder — Preview Studio</title>
+<style>
+:root{color-scheme:dark;--bg:#11151b;--panel:#1a2029;--panel2:#202834;--line:#303b49;--text:#e8edf4;--muted:#9eabbc;--accent:#70b7ff;--warn:#ffcc80;--bad:#ff8c8c}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+header{padding:18px 22px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:16px}
+h1{font-size:19px;margin:0;font-weight:650}header p{margin:4px 0 0;color:var(--muted);font-size:12px}
+.app{display:grid;grid-template-columns:340px minmax(0,1fr);min-height:calc(100vh - 75px)}
+aside{padding:16px;border-right:1px solid var(--line);background:#151a21;overflow:auto;max-height:calc(100vh - 75px)}
+main{min-width:0;display:flex;flex-direction:column}
+.section-title{font-size:11px;letter-spacing:.11em;text-transform:uppercase;color:#aab8c9;font-weight:700;margin:8px 0 12px}
+.control{margin:0 0 14px}.control-head{display:flex;justify-content:space-between;gap:10px;margin-bottom:6px}.control label{color:#dce4ef}.value{color:var(--accent);font-variant-numeric:tabular-nums;font-weight:650}
+input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer}
+select{width:100%;background:#10151b;border:1px solid var(--line);border-radius:7px;padding:8px;color:var(--text);font:inherit;cursor:pointer}
+input[type=number]{width:100%;background:#10151b;border:1px solid var(--line);border-radius:7px;padding:8px;color:var(--text);font:inherit}
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:10px}.field label{display:block;color:var(--muted);font-size:12px;margin-bottom:5px}
+.actions{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0}
+button{border:1px solid #3b4b5e;background:var(--panel2);color:var(--text);border-radius:8px;padding:8px 11px;cursor:pointer;font:inherit}
+button:hover{border-color:var(--accent)}button.primary{background:#20456b;border-color:#3678b5}
+.check{display:flex;align-items:center;gap:8px;color:#dce4ef;margin:10px 0}.check input{accent-color:var(--accent)}
+#viewport{height:min(69vh,720px);min-height:390px;position:relative;background:radial-gradient(ellipse at 50% 42%,#222d3a,#10141a 72%);overflow:hidden}
+#canvas{position:absolute;inset:0}#canvas canvas{display:block;width:100%;height:100%}
+.hud{position:absolute;left:15px;top:14px;pointer-events:none;display:flex;flex-direction:column;gap:5px}
+.pill{background:#121820d9;border:1px solid #344150;border-radius:6px;padding:5px 8px;color:#c5d0de;font-size:11px;width:max-content;max-width:330px}
+.viewbar{display:flex;gap:7px;flex-wrap:wrap;padding:12px 15px;border-bottom:1px solid var(--line)}
+.viewbar button{font-size:12px;padding:6px 9px}.viewbar button.active{border-color:var(--accent);color:var(--accent)}
+.metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;padding:14px}
+.metric{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:11px 12px;min-width:0}
+.metric span{display:block;color:var(--muted);font-size:11px}.metric strong{display:block;font-size:18px;font-weight:650;margin-top:3px;overflow-wrap:anywhere}
+#status{margin:0 14px 14px;padding:11px 12px;border:1px solid var(--line);background:var(--panel);border-radius:9px;color:var(--muted)}
+#status.warn{border-color:#745b2f;color:var(--warn)}#status.bad{border-color:#783b42;color:var(--bad)}
+footer{padding:0 15px 16px;color:var(--muted);font-size:11px}
+.small{font-size:11px;color:var(--muted)}.divider{border:0;border-top:1px solid var(--line);margin:17px 0}
+@media(max-width:900px){.app{grid-template-columns:1fr}aside{max-height:none;border-right:0;border-bottom:1px solid var(--line)}#viewport{height:55vh;min-height:330px}.metrics{grid-template-columns:repeat(2,minmax(0,1fr))}}
+</style>
+</head>
+<body>
+<header>
+ <div><h1>Helical Fluted Cylinder — Preview Studio</h1><p>Fast mesh preview based on the geometry equations in the Fusion 360 script</p></div>
+ <div class="small">LOCAL HTML TOOL · NO FUSION REQUIRED</div>
+</header>
+<div class="app">
+<aside>
+ <div class="section-title">Dimensions</div>
+ <div class="fields">
+  <div class="field" style="grid-column:1/-1"><label for="totalLength">Total length (mm)</label><input id="totalLength" type="number" min="5" max="500" step="1" value="100"></div>
+  <div class="field"><label for="id">Bore ID (mm)</label><input id="id" type="number" min="1" max="60" step=".1" value="18.8"></div>
+  <div class="field"><label for="thickness">Wall thickness (mm)</label><input id="thickness" type="number" min=".5" max="30" step=".1" value="4"></div>
+ </div>
+ <hr class="divider">
+ <div class="section-title">Flute geometry</div>
+ <div class="control"><div class="control-head"><label for="fluteHeight">Flute height</label><span class="value" id="fluteHeightVal"></span></div><input id="fluteHeight" type="range" min="0.2" max="3.5" step="0.1" value="1.5"></div>
+ <div class="control"><div class="control-head"><label for="apex">Flute apex angle</label><span class="value" id="apexVal"></span></div><input id="apex" type="range" min="10" max="100" step="1" value="50"></div>
+ <div class="control"><div class="control-head"><label for="flutes">Flute count</label><span class="value" id="flutesVal"></span></div><input id="flutes" type="range" min="4" max="40" step="1" value="20"></div>
+ <hr class="divider">
+ <div class="section-title">Revolutions and twist</div>
+ <div class="control"><div class="control-head"><label for="preset">Quick-load preset</label></div>
+  <select id="preset">
+   <option value="Custom">Custom / Current Values</option>
+   <option value="Bold">Bold (35° variation, 1 cycle)</option>
+   <option value="Balanced">Balanced (25° variation, 1 cycle)</option>
+   <option value="Extreme">Extreme (50° variation, 1 cycle)</option>
+   <option value="Ripple">Ripple (12° variation, 3 cycles)</option>
+  </select>
+  <div class="small" style="margin-top:5px">Sets twist variation and twist cycles, same as the Fusion dialog.</div></div>
+ <div class="control"><div class="control-head"><label for="revs">Base revolutions per section</label><span class="value" id="revsVal"></span></div><input id="revs" type="range" min="1" max="4" step="1" value="1"></div>
+ <div class="control"><div class="control-head"><label for="intervals">Intervals per revolution</label><span class="value" id="intervalsVal"></span></div><input id="intervals" type="range" min="4" max="120" step="1" value="10"></div>
+ <div class="control"><div class="control-head"><label for="twist">Twist variation</label><span class="value" id="twistVal"></span></div><input id="twist" type="range" min="0" max="50" step="1" value="10"></div>
+ <div class="control"><div class="control-head"><label for="cycles">Twist cycles</label><span class="value" id="cyclesVal"></span></div><input id="cycles" type="range" min="1" max="5" step="1" value="1"></div>
+ <div class="control"><div class="control-head"><label for="smooth">Surface smoothing (sub-steps per interval)</label><span class="value" id="smoothVal"></span></div><input id="smooth" type="range" min="1" max="8" step="1" value="4"></div>
+ <hr class="divider">
+ <div class="section-title">Pattern</div>
+ <div class="fields">
+  <div class="field"><label for="patternCount">Pattern count</label><input id="patternCount" type="number" min="1" max="20" step="1" value="2"></div>
+  <div class="field"><label for="offset">Pattern spacing offset (mm)</label><input id="offset" type="number" min="0" max="2" step=".01" value=".01"></div>
+ </div>
+ <label class="check"><input id="fusionPair" type="checkbox" checked> Match Fusion loft (pair each flute with nearest flute)</label>
+ <label class="check"><input id="showBore" type="checkbox" checked> Show central bore</label>
+ <label class="check"><input id="wire" type="checkbox"> Show mesh edges</label>
+ <div class="actions"><button class="primary" id="reset">Reset defaults</button><button id="save">Export preview STL</button></div>
+ <div class="small">Drag to orbit · Scroll to zoom · Right-drag to pan. STL is a triangulated preview mesh, not a Fusion feature tree.</div>
+</aside>
+<main>
+ <div id="viewport">
+  <div id="canvas"></div>
+  <div class="hud"><div class="pill" id="viewLabel">Perspective view</div><div class="pill" id="renderInfo">Generating mesh…</div></div>
+ </div>
+ <div class="viewbar">
+  <button class="active" data-view="perspective">Perspective</button><button data-view="side">Side</button><button data-view="end">End</button><button data-view="front">Front</button><button id="fit">Fit model</button>
+ </div>
+ <div class="metrics">
+  <div class="metric"><span>Nominal OD</span><strong id="odMetric">22.80 mm</strong></div>
+  <div class="metric"><span>Flute-tip diameter</span><strong id="tipMetric">25.80 mm</strong></div>
+  <div class="metric"><span>Length per section</span><strong id="sectionMetric">50.00 mm</strong></div>
+  <div class="metric"><span>Loft profiles / section</span><strong id="profilesMetric">11</strong></div>
+ </div>
+ <div id="status">Ready.</div>
+ <footer>Preview geometry samples the same radial flute profile and nonlinear phase equation as the current Fusion script. Mesh visualization is an approximation of the resulting solid and cannot guarantee Fusion loft validity.</footer>
+</main>
+</div>
+<script type="importmap">
+{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.164.1/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.164.1/examples/jsm/"}}
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { STLExporter } from 'three/addons/exporters/STLExporter.js';
+
+const $ = id => document.getElementById(id);
+const scene = new THREE.Scene();
+scene.background = new THREE.Color('#11151b');
+const camera = new THREE.PerspectiveCamera(42, 1, .1, 3000);
+camera.up.set(0,0,1); // model axis is +Z (same as Fusion/STL); set before OrbitControls is created
+camera.position.set(120, -165, 115);
+const renderer = new THREE.WebGLRenderer({antialias:true, preserveDrawingBuffer:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.15;
+$('canvas').appendChild(renderer.domElement);
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true; controls.dampingFactor=.08;
+scene.add(new THREE.HemisphereLight(0xc8ddff,0x27303b,2.0));
+const keyLight = new THREE.DirectionalLight(0xffffff,3.0); keyLight.position.set(80,-90,130); scene.add(keyLight);
+const fillLight = new THREE.DirectionalLight(0x79b8ff,1.4); fillLight.position.set(-90,50,15); scene.add(fillLight);
+const grid = new THREE.GridHelper(160,16,0x33404d,0x26303b); grid.rotation.x=Math.PI/2; grid.position.z=-1; scene.add(grid);
+const axes = new THREE.AxesHelper(18); axes.material.transparent=true; axes.material.opacity=.45; scene.add(axes);
+let modelGroup = new THREE.Group(); scene.add(modelGroup);
+let edgeGroup = new THREE.Group(); scene.add(edgeGroup);
+let currentMeshes = [];
+let debounce;
+let lastConfig = null;
+
+function cfg(){
+ const v=id=>Number($(id).value);
+ return {h:v('fluteHeight'), apex:v('apex'), n:Math.max(1,Math.floor(v('flutes'))), id:v('id'), t:v('thickness'),
+  twist:v('twist'), cycles:Math.max(1,Math.floor(v('cycles'))), revs:Math.max(1,Math.floor(v('revs'))),
+  intervals:Math.max(1,Math.floor(v('intervals'))), sub:Math.max(1,Math.floor(v('smooth'))), fusionPair:$('fusionPair').checked, total:Math.max(1,v('totalLength')),
+  count:Math.max(1,Math.floor(v('patternCount'))), offset:Math.max(0,v('offset')), bore:$('showBore').checked};
+}
+function phase(f,c){return 2*Math.PI*c.revs*f+(c.twist*Math.PI/180)*Math.sin(2*Math.PI*c.cycles*f);}
+function flute(radius,height,apex,angle){
+ const tipR=radius+height, half=apex*Math.PI/360;
+ const disc=radius*radius-tipR*tipR*Math.sin(half)**2;
+ if(disc<=0) throw new Error('Flute geometry does not intersect nominal OD. Reduce flute height or adjust apex angle.');
+ const d=tipR*Math.cos(half)-Math.sqrt(disc);
+ const x=tipR-d*Math.cos(half), y=d*Math.sin(half);
+ const rotate=(px,py)=>[px*Math.cos(angle)-py*Math.sin(angle),px*Math.sin(angle)+py*Math.cos(angle)];
+ return [rotate(x,-y),rotate(tipR,0),rotate(x,y)];
+}
+function profilePoints(c, ph, samplesPerArc=5){
+ const R=(c.id+c.t)/2, pitch=2*Math.PI/c.n, pts=[];
+ for(let i=0;i<c.n;i++){
+  const [lo,tip,up]=flute(R,c.h,c.apex,ph+i*pitch);
+  pts.push([lo[0],lo[1]],[tip[0],tip[1]],[up[0],up[1]]);
+  let a1=Math.atan2(up[1],up[0]), a2=Math.atan2(flute(R,c.h,c.apex,ph+((i+1)%c.n)*pitch)[0][1],flute(R,c.h,c.apex,ph+((i+1)%c.n)*pitch)[0][0]);
+  while(a2<=a1) a2+=2*Math.PI;
+  for(let j=1;j<samplesPerArc;j++){
+   const a=a1+(a2-a1)*j/samplesPerArc;
+   pts.push([R*Math.cos(a),R*Math.sin(a)]);
+  }
+ }
+ return pts;
+}
+function buildSection(c, sectionLen, originZ, material){
+ const totalIntervals=c.revs*c.intervals;
+ const rings=totalIntervals+1;
+ const pointsPerRing=c.n*(3+4); // 3 flute vertices plus four arc samples per flute
+ const positions=[], indices=[];
+ const ringCache=[];
+ const pitchA=2*Math.PI/c.n;
+ let prevRaw=0, eff=0;
+ for(let k=0;k<rings;k++){
+  const raw=phase(k/totalIntervals,c);
+  // Fusion's loft pairs each flute with the nearest flute on the next section, so a step
+  // larger than half a pitch is read as a step of (step - n*pitch): the helix is lost.
+  if(k===0||!c.fusionPair)eff=raw; else {const d=raw-prevRaw; eff+=d-pitchA*Math.round(d/pitchA);}
+  prevRaw=raw;
+  ringCache.push(profilePoints(c,eff,5));
+ }
+ const P=ringCache[0].length;
+ // Fusion's loft passes a smooth surface through the section profiles, whereas straight
+ // triangles between rings cut across each twist step. Interpolate every profile point
+ // through the section rings with a Catmull-Rom spline, then mesh the refined rings.
+ const sub=Math.max(1,Math.min(c.sub||1,Math.floor(400/totalIntervals)||1));
+ const N=totalIntervals;
+ const ringAt=(k,j,axis)=>{
+  if(k<0)return 2*ringCache[0][j][axis]-ringCache[1][j][axis];
+  if(k>N)return 2*ringCache[N][j][axis]-ringCache[N-1][j][axis];
+  return ringCache[k][j][axis];
+ };
+ const fineRings=N*sub+1;
+ for(let m=0;m<fineRings;m++){
+  const k=Math.min(Math.floor(m/sub),N-1), t=(m-k*sub)/sub, z=originZ+sectionLen*(k+t)/N;
+  for(let j=0;j<P;j++){
+   const xy=[0,0];
+   for(let ax=0;ax<2;ax++){
+    const p0=ringAt(k-1,j,ax),p1=ringAt(k,j,ax),p2=ringAt(k+1,j,ax),p3=ringAt(k+2,j,ax);
+    xy[ax]=.5*((2*p1)+(-p0+p2)*t+(2*p0-5*p1+4*p2-p3)*t*t+(-p0+3*p1-3*p2+p3)*t*t*t);
+   }
+   positions.push(xy[0],xy[1],z);
+  }
+ }
+ for(let k=0;k<fineRings-1;k++) for(let j=0;j<P;j++){
+  const a=k*P+j, b=k*P+(j+1)%P, d=(k+1)*P+j, e=(k+1)*P+(j+1)%P;
+  indices.push(a,b,d,b,e,d);
+ }
+ // Triangulated end caps, with an optional central hole.
+ const first=ringCache[0], last=ringCache[ringCache.length-1];
+ const boreSegments=Math.max(48,c.n*8);
+ const boreR=c.bore?c.id/2:0;
+ function addCap(z,outerPts,flip){
+  const contour=outerPts.map(p=>new THREE.Vector2(p[0],p[1]));
+  const holes=[];
+  let holePts=[];
+  if(c.bore){
+   holePts=Array.from({length:boreSegments},(_,j)=>{
+    const a=2*Math.PI*j/boreSegments;
+    return new THREE.Vector2(boreR*Math.cos(a),boreR*Math.sin(a));
+   });
+   holes.push(holePts);
+  }
+  const triangles=THREE.ShapeUtils.triangulateShape(contour,holes);
+  const capPoints=contour.concat(...holes);
+  const start=positions.length/3;
+  for(const p of capPoints)positions.push(p.x,p.y,z);
+  for(const tri of triangles){
+   if(flip)indices.push(start+tri[0],start+tri[2],start+tri[1]);
+   else indices.push(start+tri[0],start+tri[1],start+tri[2]);
+  }
+ }
+ addCap(originZ,first,true);
+ addCap(originZ+sectionLen,last,false);
+ // Inner bore surface
+ if(c.bore){
+  const start=positions.length/3;
+  for(let k=0;k<rings;k++) for(let j=0;j<boreSegments;j++){
+   const a=2*Math.PI*j/boreSegments;positions.push(boreR*Math.cos(a),boreR*Math.sin(a),originZ+sectionLen*k/totalIntervals);
+  }
+  for(let k=0;k<rings-1;k++) for(let j=0;j<boreSegments;j++){
+   const a=start+k*boreSegments+j,b=start+k*boreSegments+(j+1)%boreSegments,d=start+(k+1)*boreSegments+j,e=start+(k+1)*boreSegments+(j+1)%boreSegments;
+   indices.push(a,d,b,b,d,e);
+  }
+ }
+ const geo=new THREE.BufferGeometry();
+ geo.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));geo.setIndex(indices);geo.computeVertexNormals();
+ const mesh=new THREE.Mesh(geo,material);mesh.castShadow=true;mesh.receiveShadow=true;return mesh;
+}
+function clearGroup(group){
+ while(group.children.length){
+  const o=group.children[0];
+  group.remove(o);
+  if(o.geometry)o.geometry.dispose();
+  if(o.material){if(Array.isArray(o.material))o.material.forEach(m=>m.dispose());else o.material.dispose();}
+ }
+}
+function validate(c){
+ const errors=[], warnings=[];
+ if(c.id<=0 || c.t<=0)errors.push('Bore ID and wall thickness must be positive.');
+ if(c.total<=0 || c.count<1)errors.push('Total length and pattern count must be positive.');
+ if(c.h<=0)errors.push('Flute height must be positive.');
+ if(!(c.apex>0&&c.apex<180))errors.push('Apex angle must be between 0 and 180 degrees.');
+ if(c.twist*Math.PI/180*c.cycles>=c.revs&&c.twist>0)errors.push('Twist settings may reverse or stall the phase. Reduce twist variation or cycles.');
+ try{
+  const R=(c.id+c.t)/2, pts=flute(R,c.h,c.apex,0), span=Math.atan2(pts[2][1],pts[2][0])-Math.atan2(pts[0][1],pts[0][0]), pitch=2*Math.PI/c.n;
+  if(span>=pitch)errors.push(`Adjacent flutes overlap: angular span ${(span*180/Math.PI).toFixed(2)}° exceeds flute pitch ${(pitch*180/Math.PI).toFixed(2)}°.`);
+ }catch(e){errors.push(e.message);}
+ {
+  const N=c.revs*c.intervals, half=Math.PI/c.n; let maxStep=0;
+  for(let k=0;k<N;k++)maxStep=Math.max(maxStep,Math.abs(phase((k+1)/N,c)-phase(k/N,c)));
+  if(maxStep>=half)warnings.push(`Twist step between sections is up to ${(maxStep*180/Math.PI).toFixed(1)}°, but half a flute pitch is only ${(half*180/Math.PI).toFixed(1)}°. Fusion's loft will pair each flute with the nearest flute and the helix collapses to a small wobble. Use more than ${2*c.n} intervals per revolution (more if twist variation is large).`);
+ }
+ if(360/c.intervals>30)warnings.push('Each interval rotates more than 30°. Increase intervals for a smoother loft approximation.');
+ if(c.revs*c.intervals+1>200)warnings.push('High profile count; preview mesh may be slower.');
+ if(c.id>=c.id+c.t)errors.push('Bore ID must be smaller than nominal OD.');
+ return {errors,warnings};
+}
+function renderModel(){
+ const c=cfg(); lastConfig=c;
+ clearGroup(modelGroup);clearGroup(edgeGroup);currentMeshes=[];
+ $('status').className=''; $('status').textContent='Building preview mesh…';
+ const check=validate(c);
+ const R=(c.id+c.t)/2, od=2*R, tip=od+2*c.h, sectionLen=c.total/c.count, profiles=c.revs*c.intervals+1;
+ $('odMetric').textContent=od.toFixed(2)+' mm';$('tipMetric').textContent=tip.toFixed(2)+' mm';
+ $('sectionMetric').textContent=sectionLen.toFixed(2)+' mm';$('profilesMetric').textContent=profiles;
+ if(check.errors.length){
+  $('status').className='bad';$('status').textContent='Geometry issues: '+check.errors.join(' ');
+  $('renderInfo').textContent='Preview unavailable for invalid profile';return;
+ }
+ try{
+  const material=new THREE.MeshStandardMaterial({color:0x6e9dbd,metalness:.55,roughness:.31,side:THREE.DoubleSide});
+  const visibleCount=c.count;
+  const step=sectionLen-c.offset;
+  if(visibleCount>1&&step<=0)throw new Error('Pattern spacing must be positive.');
+  for(let i=0;i<visibleCount;i++){
+   const mesh=buildSection(c,sectionLen,i*step,material);
+   modelGroup.add(mesh);currentMeshes.push(mesh);
+   if($('wire').checked){
+    const edges=new THREE.LineSegments(new THREE.EdgesGeometry(mesh.geometry,28),new THREE.LineBasicMaterial({color:0x172633,transparent:true,opacity:.48}));
+    edgeGroup.add(edges);
+   }
+  }
+  const actualLength=sectionLen+(visibleCount-1)*step;
+  const spanData=(()=>{
+   const pts=flute(R,c.h,c.apex,0);return (Math.atan2(pts[2][1],pts[2][0])-Math.atan2(pts[0][1],pts[0][0]))*180/Math.PI;
+  })();
+  if(check.warnings.length){$('status').className='warn';$('status').textContent=check.warnings.join(' ');}
+  else $('status').textContent=`Preview generated. Flute span ${spanData.toFixed(2)}°; flute pitch ${(360/c.n).toFixed(2)}°. Approximate assembled length ${actualLength.toFixed(2)} mm.`;
+  $('renderInfo').textContent=`${c.n} flutes · ${profiles} loft profiles per section (${c.sub}× smoothing) · ${visibleCount} section(s)`;
+  if($('wire').checked)edgeGroup.position.copy(modelGroup.position);
+  fitCamera();
+ }catch(e){$('status').className='bad';$('status').textContent=e.message;$('renderInfo').textContent='Could not generate preview';}
+}
+const FIT_MARGIN=1.08; // 1.0 = model exactly touches the viewport edge
+function fitDistance(size,dirVec){
+ // Exact: project the 8 corners of the model's bounding box onto the camera's view and
+ // return the smallest distance at which every corner is inside the field of view.
+ const tv=Math.tan(THREE.MathUtils.degToRad(camera.fov)/2), th=tv*camera.aspect;
+ const f=dirVec.clone().negate().normalize();                       // camera forward
+ const r=new THREE.Vector3().crossVectors(f,camera.up).normalize(); // camera right
+ const u=new THREE.Vector3().crossVectors(r,f);                     // camera up
+ let need=0;
+ for(const sx of[-.5,.5])for(const sy of[-.5,.5])for(const sz of[-.5,.5]){
+  const p=new THREE.Vector3(sx*size.x,sy*size.y,sz*size.z), pz=p.dot(f);
+  need=Math.max(need,Math.abs(p.dot(r))/th-pz,Math.abs(p.dot(u))/tv-pz);
+ }
+ return need*FIT_MARGIN;
+}
+function placeCamera(view){
+ const box=new THREE.Box3().setFromObject(modelGroup);
+ const empty=box.isEmpty();
+ const center=empty?new THREE.Vector3():box.getCenter(new THREE.Vector3());
+ const size=empty?new THREE.Vector3(40,40,100):box.getSize(new THREE.Vector3());
+ const dir=new THREE.Vector3(...{side:[1,0,0],end:[0,-.001,1],front:[0,-1,0],perspective:[.78,-1.1,.75]}[view]).normalize();
+ const d=Math.max(fitDistance(size,dir),1);
+ const dv=dir.clone().multiplyScalar(d);
+ controls.target.copy(center);camera.position.copy(center).add(dv);
+ const maxDim=Math.max(size.x,size.y,size.z,1);
+ camera.near=Math.max(.1,d/200);camera.far=d+maxDim*10;camera.updateProjectionMatrix();controls.update();
+ if(!empty)grid.position.z=box.min.z-1;
+}
+function fitCamera(){placeCamera('perspective');}
+function setView(v){
+ placeCamera(v);
+ document.querySelectorAll('[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view===v));
+ $('viewLabel').textContent=({perspective:'Perspective view',side:'Side view',end:'End-on view',front:'Front view'})[v];
+}
+function resize(){const el=$('canvas');const w=el.clientWidth,h=el.clientHeight;if(!w||!h)return;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();}
+function animate(){requestAnimationFrame(animate);controls.update();renderer.render(scene,camera)}
+function exportSTL(){
+ if(!modelGroup.children.length){$('status').className='bad';$('status').textContent='No valid preview to export.';return;}
+ const exporter=new STLExporter();const data=exporter.parse(modelGroup,{binary:true});
+ const blob=new Blob([data],{type:'application/octet-stream'}),url=URL.createObjectURL(blob),a=document.createElement('a');
+ a.href=url;a.download='helical_fluted_cylinder_preview.stl';a.click();URL.revokeObjectURL(url);
+}
+function updateLabels(){
+ const pairs={fluteHeight:['fluteHeightVal',v=>v.toFixed(1)+' mm'],apex:['apexVal',v=>v+'°'],flutes:['flutesVal',v=>v],
+ twist:['twistVal',v=>v+'°'],cycles:['cyclesVal',v=>v],revs:['revsVal',v=>v],intervals:['intervalsVal',v=>v],smooth:['smoothVal',v=>v+'×']};
+ for(const [id,[label,fmt]] of Object.entries(pairs))$(label).textContent=fmt(Number($(id).value));
+}
+function schedule(){updateLabels();clearTimeout(debounce);debounce=setTimeout(renderModel,100);}
+document.querySelectorAll('input').forEach(el=>el.addEventListener('input',schedule));
+$('showBore').addEventListener('change',schedule);$('fusionPair').addEventListener('change',schedule);$('wire').addEventListener('change',schedule);
+$('reset').addEventListener('click',()=>{
+ const values={fluteHeight:1.5,apex:50,flutes:20,id:18.8,thickness:4,twist:10,cycles:1,revs:1,intervals:10,smooth:4,totalLength:100,patternCount:2,offset:.01};
+ for(const [id,v] of Object.entries(values))$(id).value=v;
+ $('preset').value='Custom';$('showBore').checked=true;$('fusionPair').checked=true;$('wire').checked=false;schedule();
+});
+$('save').addEventListener('click',exportSTL);
+const PRESETS={Bold:[35,1],Balanced:[25,1],Extreme:[50,1],Ripple:[12,3]}; // [twist variation °, twist cycles] from the Fusion script
+$('preset').addEventListener('change',()=>{const v=PRESETS[$('preset').value];if(v){$('twist').value=v[0];$('cycles').value=v[1];}schedule();});
+['twist','cycles'].forEach(id=>$(id).addEventListener('input',()=>{$('preset').value='Custom';}));
+$('fit').addEventListener('click',fitCamera);
+document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>setView(b.dataset.view)));
+new ResizeObserver(resize).observe($('canvas'));
+resize();updateLabels();renderModel();animate();
+</script>
+</body>
+</html>
