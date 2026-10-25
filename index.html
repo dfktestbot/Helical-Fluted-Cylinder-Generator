@@ -47,7 +47,8 @@ footer{padding:0 15px 16px;color:var(--muted);font-size:11px}
 <aside>
  <div class="section-title">Dimensions</div>
  <div class="fields">
-  <div class="field" style="grid-column:1/-1"><label for="totalLength">Total length (mm)</label><input id="totalLength" type="number" min="5" max="500" step="1" value="100"></div>
+  <div class="field"><label for="totalLength">Total length (mm)</label><input id="totalLength" type="number" min="5" max="500" step="1" value="100"></div>
+  <div class="field"><label for="patternCount">Pattern count</label><input id="patternCount" type="number" min="1" max="20" step="1" value="2"></div>
   <div class="field"><label for="id">Bore ID (mm)</label><input id="id" type="number" min="1" max="60" step=".1" value="18.8"></div>
   <div class="field"><label for="thickness">Wall thickness (mm)</label><input id="thickness" type="number" min=".5" max="30" step=".1" value="4"></div>
  </div>
@@ -73,9 +74,8 @@ footer{padding:0 15px 16px;color:var(--muted);font-size:11px}
  <div class="control"><div class="control-head"><label for="cycles">Twist cycles</label><span class="value" id="cyclesVal"></span></div><input id="cycles" type="range" min="1" max="5" step="1" value="1"></div>
  <div class="control"><div class="control-head"><label for="smooth">Surface smoothing (sub-steps per interval)</label><span class="value" id="smoothVal"></span></div><input id="smooth" type="range" min="1" max="8" step="1" value="4"></div>
  <hr class="divider">
- <div class="section-title">Pattern</div>
+ <div class="section-title">Pattern spacing</div>
  <div class="fields">
-  <div class="field"><label for="patternCount">Pattern count</label><input id="patternCount" type="number" min="1" max="20" step="1" value="2"></div>
   <div class="field"><label for="offset">Pattern spacing offset (mm)</label><input id="offset" type="number" min="0" max="2" step=".01" value=".01"></div>
  </div>
  <label class="check"><input id="fusionPair" type="checkbox" checked> Match Fusion loft (pair each flute with nearest flute)</label>
