@@ -346,8 +346,9 @@ def make_section(
 # ============================================================
 # DEBUG CONFIGURATION SUMMARY SKETCH
 # This sketch is independent of all model-generating features.
-# It is created after the first flute profile and is never passed
-# to the loft, extrusion, cut, or pattern operations.
+# It is the very first sketch created by the script, before any
+# flute profile sketch, and is never passed to the loft, extrusion,
+# cut, or pattern operations.
 # ============================================================
 
 def create_debug_summary_sketch(component):
@@ -487,6 +488,11 @@ def create_fluted_loft(component):
 
     total_intervals = int(REVOLUTIONS * INTERVALS_PER_REV)
 
+    # Create the isolated debug sketch first, as the initial sketch of the whole
+    # process. It is not added to loft_input or any later feature.
+    if CREATE_DEBUG_SUMMARY_SKETCH:
+        create_debug_summary_sketch(component)
+
     for i in range(total_intervals + 1):
         fraction = i / float(total_intervals)
         z_mm = LENGTH * fraction
@@ -503,11 +509,6 @@ def create_fluted_loft(component):
             APEX_ANGLE_DEG,
             int(FLUTE_COUNT)
         )
-
-        # Create the isolated debug sketch immediately after the first
-        # geometry profile. It is not added to loft_input or any later feature.
-        if i == 0 and CREATE_DEBUG_SUMMARY_SKETCH:
-            create_debug_summary_sketch(component)
 
         loft_input.loftSections.add(profile)
 
