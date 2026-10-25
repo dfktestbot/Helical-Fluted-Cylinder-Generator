@@ -66,7 +66,7 @@ Presets are starting points. They do not guarantee that every combination of the
 ## Using the Fusion 360 script
 
 1. In Fusion 360, open **Utilities → Add-Ins → Scripts and Add-Ins** (or press `Shift+S`).
-2. Create a new Python script with the green **+** button, then replace its contents with `Helical_Fluted_Cylinder_Parameter_Dialog_Fixed7.py`.
+2. Create a new Python script with the green **+** button, then replace its contents with `Helical Fluted Cylinder.py`.
 3. Open a design and run the script.
 4. Adjust the values in the dialog, choose a preset if you like, and confirm.
 
@@ -118,10 +118,3 @@ To keep the twist, each section-to-section rotation, including the twist variati
 - Full runtime behavior of the script inside Fusion 360 has been tested by building models, but not across every parameter combination.
 
 ---
-
-## Publishing the preview with GitHub Pages
-
-1. Rename the preview file to `index.html` and push it to a public repository.
-2. In the repository, go to **Settings → Pages**.
-3. Under **Source**, select **Deploy from a branch**, choose `main` and `/ (root)`, and save.
-4. The site is served at `https://YOUR-USERNAME.github.io/REPOSITORY-NAME/` after a minute or two.
