@@ -5,7 +5,7 @@ A parametric hollow cylinder with longitudinal flutes that twist along its axis.
 - **Fusion 360 script**: builds the real CAD solid using sketches, a loft, a bore cut and a rectangular pattern.
 - **Browser preview studio**: a single-file Three.js tool for exploring parameters quickly and exporting a preview STL, with no Fusion required.
 
-**Live preview:** `https://dfktestbot.github.io/helical-fluted-cylinder/`
+**Live preview:** `https://dfktestbot.github.io/helical-fluted-cylinder-generator/`
 
 ---
 
